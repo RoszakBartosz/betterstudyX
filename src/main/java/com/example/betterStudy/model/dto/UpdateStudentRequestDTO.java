@@ -15,10 +15,10 @@ import java.util.List;
 @Data
 @Builder
 public class UpdateStudentRequestDTO {
+    // to tuz tez id do uopdate
     private String name;
     private String lastName;
     private String email;
     private String grade;
-    private List<Lesson> lessons;
     private LocalDate registrationDate;
 }

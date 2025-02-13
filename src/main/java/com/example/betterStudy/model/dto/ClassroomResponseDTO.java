@@ -18,8 +18,7 @@ import java.util.List;
 @Builder
 
 public class ClassroomResponseDTO {
-    @Id
-    private long id;
+    private long id; // id git, ale bez tej adnotacji @Id bo to do hibernate
     private String name;
     private String location;
     private List<Lesson> lessons = new ArrayList<>();

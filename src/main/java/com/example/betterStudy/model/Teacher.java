@@ -27,7 +27,6 @@ public class Teacher {
     private String email;
     private String grade;
     private String rate;
-    private boolean deleted;
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY) // tu tez trzeba dodac mappedBy
     private List<Lesson> lessons = new ArrayList<>();
 }

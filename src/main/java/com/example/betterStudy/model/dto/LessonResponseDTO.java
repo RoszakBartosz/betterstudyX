@@ -23,7 +23,7 @@ import java.util.List;
 public class LessonResponseDTO {
     private long id;
     private Teacher teacher;
-    private List<Student> students = new ArrayList<>();
+    private List<Student> students;
     private int numberOfStudents;
     private Classroom classroom;
     private LocalDateTime lessonDateTime;

@@ -22,9 +22,8 @@ import java.util.List;
 
 public class UpdateLessonRequestDTO {
     private long id;
-    private Teacher teacher;
-    private List<Student> students = new ArrayList<>();
-    private Classroom classroom;
+    private Teacher teacher; //id
+    private Classroom classroom; //id i szukasz w serwisie
     private LocalDateTime lessonDateTime;
     private String topic;
 }

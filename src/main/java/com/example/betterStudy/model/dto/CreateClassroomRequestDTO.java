@@ -16,7 +16,7 @@ import java.util.List;
 @Data
 @Builder
 public class CreateClassroomRequestDTO {
-    private long id;
+    private long id; // tez wyhebac
     private String name;
     private String location;
     private List<Lesson> lessons = new ArrayList<>();

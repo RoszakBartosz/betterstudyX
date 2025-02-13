@@ -16,7 +16,7 @@ import java.util.List;
 @Data
 @Builder
 public class UpdateClassroomRequestDTO {
+    // to tuz tez id do uopdate
     private String name;
     private String location;
-    private List<Lesson> lessons = new ArrayList<>();
 }

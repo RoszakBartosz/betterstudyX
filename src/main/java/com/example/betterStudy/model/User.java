@@ -1,9 +1,10 @@
 package com.example.betterStudy.model;
 
 import com.example.betterStudy.model.enums.UserRole;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,7 +13,16 @@ import java.util.*;
 
 import static com.example.betterStudy.model.enums.UserRole.TEACHER;
 @Table(name = "users")
+@Entity // :D xd
+@NoArgsConstructor // hibernate potrzebuje tego
+@EqualsAndHashCode(of = "id") // warto dodac tutaj, jakby te user bylo jako kolekcja innej encji to by moglo ci nie
+// dodac np usera do niej
+
 public class User implements UserDetails {
+    //tera git?
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
     private String email;
     private String password;
     @Enumerated(value = EnumType.STRING)
@@ -20,11 +30,11 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-    SimpleGrantedAuthority simpleGrantedAuthority;
-    simpleGrantedAuthority = new SimpleGrantedAuthority("ROLE_"+userRole.name());
-    List<GrantedAuthority> authorities = new ArrayList<>();
-    authorities.add(simpleGrantedAuthority);
-    return authorities;
+        SimpleGrantedAuthority simpleGrantedAuthority;
+        simpleGrantedAuthority = new SimpleGrantedAuthority("ROLE_"+userRole.name());
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(simpleGrantedAuthority); // formatujemy! :D
+        return authorities;
     }
 
     @Override

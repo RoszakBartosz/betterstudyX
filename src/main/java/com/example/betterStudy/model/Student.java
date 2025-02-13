@@ -33,7 +33,7 @@ public class Student {
             inverseJoinColumns = @JoinColumn(name = "lesson_id"))
     private List<Lesson> lessons = new ArrayList<>();
     private LocalDate registrationDate;
-    private boolean deleted;
+
 
 
 }

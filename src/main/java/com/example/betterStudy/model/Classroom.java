@@ -27,7 +27,6 @@ public class Classroom {
     private String name;
     @Column(name = "classroom_location")
     private String location;
-    @OneToMany()
+    @OneToMany() // to wiadomo, poptrzec i dokonczyc
     private List<Lesson> lessons = new ArrayList<>();
-    private boolean deleted;
 }

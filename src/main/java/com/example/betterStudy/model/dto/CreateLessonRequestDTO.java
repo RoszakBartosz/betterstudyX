@@ -20,7 +20,7 @@ import java.util.List;
 @Data
 @Builder
 public class CreateLessonRequestDTO {
-    private Teacher teacher;
+    private Teacher teacher; // jak ktos tworzy lekcje w json, to ma podac caly obiekt Teacher i classroom? :Dmoze byc tylko id? musi byc tylko, potem po tym id w serwisie szukasz z db, i masz obikety Teacher i classtom
     private Classroom classroom;
     private LocalDateTime lessonDateTime;
     private String topic;

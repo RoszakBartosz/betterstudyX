@@ -6,7 +6,7 @@ import lombok.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-    @Data
+    @Data // co to przerwy przed adnotaccjiami xD
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
