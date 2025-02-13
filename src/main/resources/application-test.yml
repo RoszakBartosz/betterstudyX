@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:betterStudy
+    driverClassName: org.h2.Driver
+    username: sa
+    password: qwerty
+  jpa:
+    hibernate:
+      ddl-auto: none
