@@ -2,3 +2,12 @@ databaseChangeLog:
   - include:
       file: changesets/db.1.create-tables.yml
       relativeToChangeLogFile: true
+  - include:
+      file: changesets/db.2.create-id-column-for-users.yml
+      relativeToChangeLogFile: true
+  - include:
+      file: changesets/db.3.create-deleted-column-for-teacher.yml
+      relativeToChangeLogFile: true
+  - include:
+      file: changesets/db.4.create-deleted-column-for-others.yml
+      relativeToChangeLogFile: true

@@ -1,6 +1,7 @@
 package com.example.betterStudy.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SoftDelete;
@@ -24,9 +25,11 @@ public class Classroom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(name = "classroom_name")
+    @NotBlank(message = "Name cannot be empty! ")
     private String name;
     @Column(name = "classroom_location")
+    @NotBlank(message = "Location cannot be empty ")
     private String location;
-    @OneToMany() // to wiadomo, poptrzec i dokonczyc
-    private List<Lesson> lessons = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "classroom") // to wiadomo, poptrzec i dokonczyc
+    private List<Lesson> lessons;
 }

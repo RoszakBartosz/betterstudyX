@@ -4,6 +4,8 @@ import com.example.betterStudy.model.Student;
 import com.example.betterStudy.model.dto.CreateStudentRequestDTO;
 import com.example.betterStudy.model.dto.StudentResponseDTO;
 import com.example.betterStudy.model.dto.UpdateStudentRequestDTO;
+import com.example.betterStudy.model.exception.InvalidEmailException;
+import com.example.betterStudy.model.exception.NotFoundStudentException;
 import com.example.betterStudy.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.SoftDelete;
@@ -23,6 +25,9 @@ public class StudentService {
     private final StudentRepository studentRepository;
     @Transactional
     public StudentResponseDTO save(CreateStudentRequestDTO studentRequestDTO){
+        if (studentRepository.findByEmail(studentRequestDTO.getEmail())==null) {
+            throw new InvalidEmailException("this email already exists ");
+        }
         Student buildStudent = Student.builder()
                 .name(studentRequestDTO.getName())
                 .lastName(studentRequestDTO.getLastName())
@@ -41,7 +46,7 @@ public class StudentService {
                 .build();
     }
     public StudentResponseDTO findById(Long id){
-        Student student = studentRepository.findById(id).orElseThrow(NoSuchElementException::new);
+        Student student = studentRepository.findById(id).orElseThrow(NotFoundStudentException::new);
         return StudentResponseDTO.builder()
                 .id(student.getId())
                 .name(student.getName())
@@ -53,6 +58,9 @@ public class StudentService {
     }
 
     public Page<StudentResponseDTO> findAll(Pageable pageable){
+        if (studentRepository.findAll().isEmpty()){
+            throw new NotFoundStudentException("the set of students is empty ");
+        }
         Page<Student> all = studentRepository.findAll(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()));
         Page<StudentResponseDTO> pageStudentResponseDTO = all.map(student -> {
             return StudentResponseDTO.builder()
@@ -68,7 +76,10 @@ public class StudentService {
     }
     @Transactional
     public StudentResponseDTO updateStudent(UpdateStudentRequestDTO requestDTO, long id){
-        Student studentById = studentRepository.findById(id).orElseThrow(NoSuchElementException::new);
+        if (studentRepository.findByEmail(requestDTO.getEmail())==null) {
+            throw new InvalidEmailException("this email already exists ");
+        }
+        Student studentById = studentRepository.findById(id).orElseThrow(NotFoundStudentException::new);
         Student studentBuild = Student.builder()
                 .id(id)
                 .name(requestDTO.getName())
@@ -93,6 +104,10 @@ public class StudentService {
     @Transactional
     @SoftDelete
     public void delete(long id){
+
+        if (studentRepository.findById(id)==null){
+            throw new NotFoundStudentException("cannot find this student ");
+        }
         studentRepository.deleteById(id);
     }
 

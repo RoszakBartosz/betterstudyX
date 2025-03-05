@@ -1,17 +1,21 @@
 package com.example.betterStudy.model.security;
 
 import com.example.betterStudy.model.enums.UserRole;
+import com.example.betterStudy.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -22,22 +26,26 @@ import java.io.ObjectInputFilter;
 
 @EnableWebSecurity
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfiguration  {
-
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
+    private final UserDetailsService userDetailsService;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorize -> authorize
-
-                        .requestMatchers("/student/save")
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated())
-                .authenticationProvider(authenticationProvider());
+            .authorizeHttpRequests(authorize -> authorize
+                    .requestMatchers("/student/find-by-id/**").permitAll()
+                    .requestMatchers(request -> request.getMethod().equals("POST")).hasRole("ADMIN")
+                    .requestMatchers(request -> request.getServletPath().startsWith("/classroom")).hasAnyRole("STUDENT", "ADMIN", "TEACHER")
+                    .requestMatchers("/student/**").hasAnyRole("ADMIN", "TEACHER")
+                    .requestMatchers("/teacher/**").hasRole("ADMIN")
+                    .requestMatchers("/lesson/find-by-id/**").hasRole("STUDENT")
+                    .requestMatchers("/lesson/**").hasAnyRole("TEACHER", "ADMIN")
+                    .requestMatchers("/users/**").hasRole("ADMIN")
+                    .anyRequest().authenticated()
+            ).authenticationProvider(authenticationProvider())
+             .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }
@@ -57,11 +65,10 @@ public class SecurityConfiguration  {
 
 
     @Bean
-    public AuthenticationProvider authenticationProvider(){
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService();
-        //wstrzyknać tu userservice obok setuserdetailservice
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
+        authenticationProvider.setUserDetailsService(userService);
+        authenticationProvider.setPasswordEncoder(passwordEncoder);
         return authenticationProvider;
     }
 }

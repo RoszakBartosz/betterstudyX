@@ -15,3 +15,15 @@ spring:
     change-log: classpath:/db.changelog/changelog-master.yml
     enabled: true
     drop-first: false
+    mail:
+      host: smtp.gmail.com
+      port: 587
+      username: bar.roszak@gmail.com
+      password: Counterstrike11111
+      properties:
+        mail:
+          smtp:
+            auth: true
+            starttls:
+              enable: true
+

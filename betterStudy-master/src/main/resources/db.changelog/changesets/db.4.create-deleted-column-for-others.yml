@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 4
+      author: Bartosz.Roszak
+      changes:
+        - sqlFile:
+            dbms: postgresql
+            encoding: utf8
+            path: db.4.create-deleted-column-for-others.sql
+            relativeToChangelogFile: true

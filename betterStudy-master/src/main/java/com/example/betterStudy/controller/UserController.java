@@ -1,48 +1,39 @@
 package com.example.betterStudy.controller;
 
-import com.example.betterStudy.model.User;
+import com.example.betterStudy.model.dto.RequestUserDTO;
 import com.example.betterStudy.model.dto.UserResponseDTO;
-import com.example.betterStudy.repository.UserRepository;
 import com.example.betterStudy.service.UserService;
-import lombok.NoArgsConstructor;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.beans.Encoder;
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
 public class UserController {
-    @Autowired
-    private UserRepository userRepository;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-
-
-    @GetMapping("/users")
-    public List<User> getUsers(@RequestParam("username") Optional<String> usernameSubstring)
+    @GetMapping("/find-by-id/{id}")
+    public ResponseEntity<UserResponseDTO> findById(@Valid @PathVariable(name = "id")long id)
     {
-        return userService.getUsers; //?
+        UserResponseDTO userResponseDTO = userService.findById(id);
+        return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
     }
 
     @PostMapping("/create-user")
-    public UserResponseDTO createUser(@RequestBody User user) //DTO!!!!!
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody RequestUserDTO requestUserDTO) //DTO!!!!!
     {
-        return userService.createUser(user); //nadaj role user
+        UserResponseDTO user = userService.createUser(requestUserDTO);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
-
+    @DeleteMapping("/delete-by-id/{id}")
+    public HttpStatus deleteById(@Valid @PathVariable(name = "id")long id){
+        userService.deleteById(id);
+        return HttpStatus.OK;
+    }
 
 
 }
