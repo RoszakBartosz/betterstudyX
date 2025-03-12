@@ -9,6 +9,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface TeacherRepository extends JpaRepository<Teacher, Long> {
-    @Query(value = "SELECT u.mail FROM teacher u")
+    @Query(value = "SELECT u.email FROM teacher u")
     List<String> findAllEmailsForTeacher();
 }

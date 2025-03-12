@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {
-    @Query(value = "SELECT student.email FROM student WHERE email = :email")
     Student findByEmail(String email);
     @Query(value = "SELECT student.email FROM student u")
     List<String> findAllEmailsForStudent();
