@@ -6,6 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class BetterStudyApplication {
 
+	//testy jednostkowe -> service, contorller
+
+	//
+
 	public static void main(String[] args) {
 		SpringApplication.run(BetterStudyApplication.class, args);
 	}

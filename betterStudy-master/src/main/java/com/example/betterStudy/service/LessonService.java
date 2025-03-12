@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,13 +78,15 @@ public class LessonService {
                 .build();
     }
 
+
+
+
     private void send() {
-        List<Student> all = studentRepository.findAll();
-        List<Teacher> allTeachers = teacherRepository.findAll();
-        List<String> collect = allTeachers.stream().map(teacher -> teacher.getEmail()).collect(Collectors.toList());
-        List<String> collect1 = all.stream().map(student -> student.getEmail()).collect(Collectors.toList());
-        List<String> emails = Stream.concat(collect1.stream(), collect.stream()).collect(Collectors.toList());
-        for (String email: emails) {
+        List<String> allEmailsForTeacher = teacherRepository.findAllEmailsForTeacher();
+        List<String> allEmailsForStudent = studentRepository.findAllEmailsForStudent();
+        List<String> emailsToSend = Stream.concat(allEmailsForStudent.stream(), allEmailsForTeacher.stream()).collect(Collectors.toList());
+        // TODO sprobowac wyciagnac z db tylko maile, z query
+        for (String email: emailsToSend) {
             sendNewLessonsEmail(email);
         }
     }

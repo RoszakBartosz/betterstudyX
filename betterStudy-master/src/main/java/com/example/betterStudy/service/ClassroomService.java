@@ -26,10 +26,10 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-
 public class ClassroomService {
     private final ClassroomRepository classroomRepository;
     private final LessonRepository lessonRepository;
+
     public ClassroomResponseDTO findById(long id){
         Classroom classroom = classroomRepository.findById(id).orElseThrow(NoSuchElementException::new);
         return ClassroomResponseDTO.builder()

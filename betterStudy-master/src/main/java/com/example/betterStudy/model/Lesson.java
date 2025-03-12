@@ -24,14 +24,15 @@ public class Lesson {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @ManyToOne(fetch = FetchType.LAZY) // to, to sao co na dole
+    @ManyToOne(fetch = FetchType.LAZY) // to, to sao co na dole //TODO
     @NotNull(message = "teacher cannot be null ")
     private Teacher teacher;
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "lessons") // to git
     @NotEmpty(message = "List of students cannot be empty ")
     private List<Student> students = new ArrayList<>();
     @NotNull(message = "classroom cannot be null ")
-    @ManyToOne(fetch = FetchType.LAZY) // te relacje tutaj tak samo, jakbys cos teraz dodal w te pole, by wyjebalo blad
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "classroom_id")
     private Classroom classroom;
     @NotNull(message = "lessonDateTime cannot be null ")
     private LocalDateTime lessonDateTime;
