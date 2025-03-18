@@ -34,7 +34,7 @@ public class TeacherService {
         }
     }
     public Page<TeacherResponseDTO> findAll(Pageable pageable, Sort sort){
-        Page<Teacher> all = teacherRepository.findAll(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()));
+        Page<Teacher> all = teacherRepository.findAll(pageable);
         Page<TeacherResponseDTO> pageOfDTO = all.map(teacher -> {
             return TeacherResponseDTO.builder()
                     .id(teacher.getId())

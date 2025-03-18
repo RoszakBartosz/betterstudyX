@@ -28,6 +28,11 @@ public class StudentController {
         return new ResponseEntity<>(studentService.findAll(pageable), HttpStatus.OK);
     }
 
+    @GetMapping("find-by-id/{id}")
+    public ResponseEntity<StudentResponseDTO> findById(@PathVariable(name = "id")Long id){
+        return new ResponseEntity<>(studentService.findById(id), HttpStatus.OK);
+    }
+
     @PostMapping("/save")
     public ResponseEntity<StudentResponseDTO> save (@Valid @RequestBody CreateStudentRequestDTO requestDTO){
         return new ResponseEntity<>(studentService.save(requestDTO), HttpStatus.CREATED);

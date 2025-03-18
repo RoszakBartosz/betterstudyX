@@ -30,7 +30,6 @@ public class ClassroomController {
     }
     @PostMapping("/save")
     // todo trzeba pododawac walidajce w dto's, by ci ktos nie wjebal pustego stringa itp
-    // tak to git reszta narazie, ja spadam dzieki
     public ResponseEntity<ClassroomResponseDTO> save(@RequestBody CreateClassroomRequestDTO requestDTO){
         return new ResponseEntity<>(classroomService.save(requestDTO), HttpStatus.CREATED);
     }

@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/lesson")
@@ -30,7 +32,12 @@ public class LessonController {
         return new ResponseEntity<>(lessonService.save(requestDTO), HttpStatus.CREATED);
     }
     @PutMapping("/update/{id}")
-    public ResponseEntity<LessonResponseDTO>    updateLesson(@RequestBody UpdateLessonRequestDTO requestDTO, @PathVariable(name = "id")long id){
+    public ResponseEntity<LessonResponseDTO> updateLesson(@RequestBody UpdateLessonRequestDTO requestDTO, @PathVariable(name = "id")long id){
         return new ResponseEntity<>(lessonService.updateLesson(requestDTO, id),HttpStatus.OK);
+    }
+    @PostMapping("/add-students/{lessonId}")
+    public ResponseEntity<Void> addStudents(@RequestBody Set<Long> studentids,@PathVariable(name = "lessonId")Long lessonId){
+        lessonService.addStudents(studentids, lessonId);
+        return ResponseEntity.ok().build();
     }
 }

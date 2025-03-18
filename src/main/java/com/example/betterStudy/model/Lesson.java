@@ -28,7 +28,6 @@ public class Lesson {
     @NotNull(message = "teacher cannot be null ")
     private Teacher teacher;
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "lessons") // to git
-    @NotEmpty(message = "List of students cannot be empty ")
     private List<Student> students = new ArrayList<>();
     @NotNull(message = "classroom cannot be null ")
     @ManyToOne(fetch = FetchType.LAZY)

@@ -15,9 +15,7 @@ import java.util.List;
 @Data
 @Builder
 public class CreateClassroomRequestDTO {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+
     @Column(name = "classroom_name")
     @NotBlank(message = "Name cannot be empty! ")
     private String name;

@@ -41,20 +41,20 @@ public class LessonService {
                 .id(lessonById.getId())
                 .topic(lessonById.getTopic())
                 .lessonDateTime(lessonById.getLessonDateTime())
-                .teacher(lessonById.getTeacher())
+                .teacherid(lessonById.getTeacher().getId())
                 .students(lessonById.getStudents())
-                .classroom(lessonById.getClassroom().getId())
+                .classroomid(lessonById.getClassroom().getId())
                 .build();
     }
     public Page<LessonResponseDTO> findAll(Pageable pageable){
-        Page<Lesson> pageOfLessons = lessonRepository.findAll(PageRequest.of(pageable.getPageSize(), pageable.getPageNumber(), Sort.by("lessonDateTime")));
+        Page<Lesson> pageOfLessons = lessonRepository.findAll(pageable);
         Page<LessonResponseDTO> pageOfResponseDTO = pageOfLessons.map(lesson -> {
             LessonResponseDTO build = LessonResponseDTO.builder()
                     .id(lesson.getId())
                     .lessonDateTime(lesson.getLessonDateTime())
                     .topic(lesson.getTopic())
-                    .teacher(lesson.getTeacher())
-                    .classroom(lesson.getClassroom().getId())
+                    .teacherid(lesson.getTeacher().getId())
+                    .classroomid(lesson.getClassroom().getId())
                     .build();
             return build;
         });
@@ -62,7 +62,6 @@ public class LessonService {
     }
     @Transactional
     public LessonResponseDTO save(CreateLessonRequestDTO requestDTO){
-        List<Teacher> all = teacherRepository.findAll();
         Teacher teacher = teacherRepository.findById(requestDTO.getTeacherId()).orElseThrow(NoSuchElementException::new);
         Classroom classroom = classroomRepository.findById(requestDTO.getClassroomId()).orElseThrow(NoSuchElementException::new);
 
@@ -77,9 +76,10 @@ public class LessonService {
         send();
         return LessonResponseDTO.builder()
                 .id(lessonBuild.getId())
+                .teacherid(lessonBuild.getTeacher().getId())
                 .topic(lessonBuild.getTopic())
                 .lessonDateTime(lessonBuild.getLessonDateTime())
-                .classroom(lessonBuild.getClassroom().getId())
+                .classroomid(lessonBuild.getClassroom().getId())
                 .build();
     }
 
@@ -108,6 +108,13 @@ public class LessonService {
         for (Student student: allById) {
             lessonById.get().getStudents().add(student);
         }
+        updateLesson(UpdateLessonRequestDTO.builder()
+                .students(lessonById.get().getStudents())
+                .classroomId(lessonById.get().getClassroom().getId())
+                .teacherId(lessonById.get().getTeacher().getId())
+                .lessonDateTime(lessonById.get().getLessonDateTime())
+                .topic(lessonById.get().getTopic())
+                .build(), lessonId);
     }
     @Transactional
     public LessonResponseDTO updateLesson(UpdateLessonRequestDTO requestDTO, long id){
@@ -128,7 +135,7 @@ public class LessonService {
                 .id(lessonBuild.getId())
                 .topic(lessonBuild.getTopic())
                 .lessonDateTime(lessonBuild.getLessonDateTime())
-                .classroom(lessonBuild.getClassroom().getId())
+                .classroomid(lessonBuild.getClassroom().getId())
                 .build();
     }
     @Transactional

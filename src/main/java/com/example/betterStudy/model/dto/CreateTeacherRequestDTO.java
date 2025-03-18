@@ -13,9 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class CreateTeacherRequestDTO {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+
     @NotBlank(message = "Name cannot be empty ")
     @Column(name = "teacher_name")
     private String name;

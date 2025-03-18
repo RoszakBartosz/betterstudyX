@@ -25,12 +25,12 @@ public class LessonResponseDTO {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @NotNull(message = "teacher cannot be null ")
-    private Teacher teacher;
+    private long teacherid;
     @NotEmpty(message = "List of students cannot be empty ")
     private List<Student> students = new ArrayList<>();
     @NotNull(message = "classroom cannot be null ")
     @JoinColumn(name = "classroom_id")
-    private long classroom;
+    private long classroomid;
     @NotNull(message = "lessonDateTime cannot be null ")
     private LocalDateTime lessonDateTime;
     @NotBlank( message = "topic cannot be empty ")

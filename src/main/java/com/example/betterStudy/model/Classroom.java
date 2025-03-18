@@ -17,7 +17,6 @@ import java.util.List;
 @EqualsAndHashCode(of = "id")
 @Builder
 @Entity
-@Table(name = "table_product")
 @SoftDelete
 public class Classroom {
     // Classroom - id, name, location, lessons(tu jakas relacja)

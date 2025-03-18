@@ -59,7 +59,7 @@ public class StudentService {
 
     public Page<StudentResponseDTO> findAll(Pageable pageable){
 
-        Page<Student> all = studentRepository.findAll(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()));
+        Page<Student> all = studentRepository.findAll(pageable);
         Page<StudentResponseDTO> pageStudentResponseDTO = all.map(student -> {
             return StudentResponseDTO.builder()
                     .id(student.getId())
@@ -84,8 +84,8 @@ public class StudentService {
                 .lastName(requestDTO.getLastName())
                 .email(requestDTO.getEmail())
                 .grade(requestDTO.getGrade())
-                .lessons(requestDTO.getLessons())
-                .registrationDate(requestDTO.getRegistrationDate())
+                .registrationDate(studentById.getRegistrationDate())
+                .lessons(studentById.getLessons())
                 .build();
         studentRepository.save(studentBuild);
         studentRepository.delete(studentById);

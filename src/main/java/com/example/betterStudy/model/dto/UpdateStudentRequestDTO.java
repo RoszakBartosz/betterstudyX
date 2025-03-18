@@ -29,9 +29,6 @@ public class UpdateStudentRequestDTO {
     private String email;
     @NotBlank(message = "grade cannot be empty ")
     private String grade;
-    @NotNull
-    LocalDate registrationDate;
-    @NotNull
-    List<Lesson> lessons;
+
 }
 

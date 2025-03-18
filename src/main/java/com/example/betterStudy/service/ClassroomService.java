@@ -40,7 +40,7 @@ public class ClassroomService {
                 .build();
     }
     public Page<ClassroomResponseDTO> findAll(Pageable pageable){
-        Page<Classroom> pageOfClassroom = classroomRepository.findAll(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("name")));
+        Page<Classroom> pageOfClassroom = classroomRepository.findAll(pageable);
         Page<ClassroomResponseDTO> classroomResponsePageDTO = pageOfClassroom.map(classroom -> {
             ClassroomResponseDTO classroomBuild = ClassroomResponseDTO.builder()
                     .id(classroom.getId())
