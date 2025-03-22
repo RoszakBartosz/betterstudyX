@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 6
+      author: Bartosz.Roszak
+      changes:
+        - sqlFile:
+            dbms: postgresql
+            encoding: utf8
+            path: db.6.set-not-null.sql
+            relativeToChangelogFile: true

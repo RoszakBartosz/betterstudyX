@@ -7,6 +7,7 @@ import com.example.betterStudy.model.Teacher;
 import com.example.betterStudy.model.dto.CreateLessonRequestDTO;
 import com.example.betterStudy.model.dto.LessonResponseDTO;
 import com.example.betterStudy.model.dto.UpdateLessonRequestDTO;
+import com.example.betterStudy.model.exception.NotFoundLessonException;
 import com.example.betterStudy.repository.ClassroomRepository;
 import com.example.betterStudy.repository.LessonRepository;
 import com.example.betterStudy.repository.StudentRepository;
@@ -19,7 +20,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -35,14 +38,15 @@ public class LessonService {
     private final TeacherRepository teacherRepository;
     private final ClassroomRepository classroomRepository;
     private final EmailSenderService emailSenderService;
+
     public LessonResponseDTO findById(long id){
-        Lesson lessonById = lessonRepository.getById(id);
+        Lesson lessonById = lessonRepository.findById(id).orElseThrow(NotFoundLessonException::new );
         return LessonResponseDTO.builder()
                 .id(lessonById.getId())
                 .topic(lessonById.getTopic())
                 .lessonDateTime(lessonById.getLessonDateTime())
                 .teacherid(lessonById.getTeacher().getId())
-                .students(lessonById.getStudents())
+                .studentsIds(lessonById.getStudents().stream().map(student -> student.getId()).toList())
                 .classroomid(lessonById.getClassroom().getId())
                 .build();
     }
@@ -52,6 +56,7 @@ public class LessonService {
             LessonResponseDTO build = LessonResponseDTO.builder()
                     .id(lesson.getId())
                     .lessonDateTime(lesson.getLessonDateTime())
+                    .studentsIds(lesson.getStudents().stream().map(student -> student.getId()).toList())
                     .topic(lesson.getTopic())
                     .teacherid(lesson.getTeacher().getId())
                     .classroomid(lesson.getClassroom().getId())
@@ -98,23 +103,19 @@ public class LessonService {
 
     public void sendNewLessonsEmail(String emailTo){
         String subject = "New Lesson is created.";
-        String text = "Please confirm your attendance.\n This message was created automatically at: " + LocalTime.now();
+        String text = "Please confirm your attendance.\n This message was created automatically at: " + LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
         emailSenderService.sendEmail(emailTo, subject, text);
     }
     @Transactional
     public void addStudents(Set<Long> studentsId, long lessonId){
         List<Student> allById = studentRepository.findAllById(studentsId);
-        Optional<Lesson> lessonById = lessonRepository.findById(lessonId);
+        Lesson lessonById = lessonRepository.findById(lessonId).orElseThrow(() -> new NoSuchElementException("Cannot find lesson by this id "));
         for (Student student: allById) {
-            lessonById.get().getStudents().add(student);
+            lessonById.getStudents().add(student);
+            student.getLessons().add(lessonById);
         }
-        updateLesson(UpdateLessonRequestDTO.builder()
-                .students(lessonById.get().getStudents())
-                .classroomId(lessonById.get().getClassroom().getId())
-                .teacherId(lessonById.get().getTeacher().getId())
-                .lessonDateTime(lessonById.get().getLessonDateTime())
-                .topic(lessonById.get().getTopic())
-                .build(), lessonId);
+        lessonRepository.save(lessonById);
+
     }
     @Transactional
     public LessonResponseDTO updateLesson(UpdateLessonRequestDTO requestDTO, long id){
@@ -144,7 +145,9 @@ public class LessonService {
         Lesson lesson = lessonRepository.findById(lessonId).orElseThrow(NoSuchElementException::new);
         for (Student student: allById) {
             lesson.getStudents().remove(student);
+            student.getLessons().remove(lesson);
         }
+        lessonRepository.save(lesson);
     }
     @Transactional
     public void delete(long id){

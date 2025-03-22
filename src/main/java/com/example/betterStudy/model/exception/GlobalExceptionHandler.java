@@ -3,6 +3,7 @@ package com.example.betterStudy.model.exception;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -50,10 +51,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(e.getMessage());
-    }    @ExceptionHandler({NotFoundTeacherException.class})
+    }
+    @ExceptionHandler({NotFoundTeacherException.class})
     public ResponseEntity<String> handeNotFoundTeacherException(NotFoundTeacherException e){
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
+                .body(e.getMessage());
+    }
+
+    @ExceptionHandler({AuthenticationException.class})
+    public ResponseEntity<String> ffweew(AuthenticationException e){
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
                 .body(e.getMessage());
     }
 }

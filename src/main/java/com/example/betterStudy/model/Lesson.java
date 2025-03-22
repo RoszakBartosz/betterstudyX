@@ -24,6 +24,9 @@ public class Lesson {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Version
+    @Column(name = "lesson_version", nullable = false)
+    private Integer version = 0;
     @ManyToOne(fetch = FetchType.LAZY) // to, to sao co na dole //TODO
     @NotNull(message = "teacher cannot be null ")
     private Teacher teacher;

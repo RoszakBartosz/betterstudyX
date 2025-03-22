@@ -40,4 +40,9 @@ public class LessonController {
         lessonService.addStudents(studentids, lessonId);
         return ResponseEntity.ok().build();
     }
+    @DeleteMapping("/delete-students/{lessonId}")
+    public ResponseEntity<Void> deleteStudents(@RequestBody Set<Long> studentids,@PathVariable(name = "lessonId")Long lessonId){
+        lessonService.deleteStudents(studentids, lessonId);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -11,3 +11,9 @@ databaseChangeLog:
   - include:
       file: changesets/db.4.create-deleted-column-for-others.yml
       relativeToChangeLogFile: true
+  - include:
+      file: changesets/db.5.create-column-version-for-lesson.yml
+      relativeToChangeLogFile: true
+  - include:
+      file: changesets/db.6.set-not-null.yml
+      relativeToChangeLogFile: true

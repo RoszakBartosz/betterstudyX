@@ -5,8 +5,12 @@ import com.example.betterStudy.model.Student;
 import com.example.betterStudy.model.dto.CreateClassroomRequestDTO;
 import com.example.betterStudy.model.dto.CreateStudentRequestDTO;
 import com.example.betterStudy.model.dto.StudentResponseDTO;
+import com.example.betterStudy.model.dto.UpdateStudentRequestDTO;
+import com.example.betterStudy.model.exception.InvalidEmailException;
+import com.example.betterStudy.model.exception.NotFoundStudentException;
 import com.example.betterStudy.repository.StudentRepository;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,6 +19,12 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
+
+
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class StudentServiceTest {
@@ -47,10 +57,10 @@ public class StudentServiceTest {
                 .build();
 
         //when
-        Mockito.when(studentRepository.findById(id)).thenReturn(Optional.ofNullable(build));
+        when(studentRepository.findById(id)).thenReturn(Optional.ofNullable(build));
         StudentResponseDTO result = studentService.findById(id);
         //then
-        Assertions.assertEquals(expectedResult, result);
+        assertEquals(expectedResult, result);
     }
     @Test
     void save_shouldSaveTheStudent(){
@@ -61,7 +71,7 @@ public class StudentServiceTest {
         String lastname = "b";
         String email = "b@b.b";
         String grade = "4";
-        Student stu = Student.builder().id(id)
+        Student stu = Student.builder().id(0)
                 .grade(grade)
                 .email(email)
                 .lastName(lastname)
@@ -75,10 +85,59 @@ public class StudentServiceTest {
                 .lastName(lastname)
                 .build();
 
-
         studentService.save(build);
         //then
-        Mockito.verify(studentRepository).save(stu);
+        verify(studentRepository).save(stu);
+    }
+    private Student student;
+    private UpdateStudentRequestDTO updateRequestDTO;
+
+    @BeforeEach
+    void setUp() {
+        student = Student.builder()
+                .id(1L)
+                .name("John")
+                .lastName("Doe")
+                .email("john.doe@example.com")
+                .grade("A")
+                .build();
+
+        updateRequestDTO = UpdateStudentRequestDTO.builder()
+                .name("John Updated")
+                .lastName("Doe Updated")
+                .email("john.doe.updated@example.com")
+                .grade("B")
+                .build();
+    }
+
+    @Test
+    void updateStudent_shouldReturnUpdatedStudent() {
+        when(studentRepository.findById(1L)).thenReturn(Optional.of(student));
+        when(studentRepository.findByEmail(updateRequestDTO.getEmail())).thenReturn(null);
+        when(studentRepository.save(any(Student.class))).thenReturn(student);
+
+        StudentResponseDTO updatedStudent = studentService.updateStudent(updateRequestDTO, 1L);
+
+        assertNotNull(updatedStudent);
+        assertEquals("John Updated", updatedStudent.getName());
+        assertEquals("Doe Updated", updatedStudent.getLastName());
+        assertEquals("john.doe.updated@example.com", updatedStudent.getEmail());
+        assertEquals("B", updatedStudent.getGrade());
+        verify(studentRepository, times(1)).save(any(Student.class));
+    }
+
+
+
+    @Test
+    void updateStudent_shouldThrowNotFoundStudentException_whenStudentNotFound() {
+        // Arrange
+        when(studentRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        NotFoundStudentException exception = assertThrows(NotFoundStudentException.class, () -> {
+            studentService.updateStudent(updateRequestDTO, 1L);
+        });
+        verify(studentRepository, never()).save(any(Student.class));
     }
 
 

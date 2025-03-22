@@ -27,7 +27,7 @@ public class LessonResponseDTO {
     @NotNull(message = "teacher cannot be null ")
     private long teacherid;
     @NotEmpty(message = "List of students cannot be empty ")
-    private List<Student> students = new ArrayList<>();
+    private List<Long> studentsIds;
     @NotNull(message = "classroom cannot be null ")
     @JoinColumn(name = "classroom_id")
     private long classroomid;

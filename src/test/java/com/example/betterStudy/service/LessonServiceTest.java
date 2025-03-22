@@ -2,13 +2,19 @@ package com.example.betterStudy.service;
 
 import com.example.betterStudy.model.Classroom;
 import com.example.betterStudy.model.Lesson;
+import com.example.betterStudy.model.Student;
 import com.example.betterStudy.model.Teacher;
 import com.example.betterStudy.model.dto.CreateLessonRequestDTO;
+import com.example.betterStudy.model.dto.LessonResponseDTO;
+import com.example.betterStudy.model.dto.UpdateLessonRequestDTO;
+import com.example.betterStudy.model.exception.GlobalExceptionHandler;
+import com.example.betterStudy.model.exception.NotFoundLessonException;
 import com.example.betterStudy.repository.ClassroomRepository;
 import com.example.betterStudy.repository.LessonRepository;
 import com.example.betterStudy.repository.StudentRepository;
 import com.example.betterStudy.repository.TeacherRepository;
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,24 +23,33 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 @ExtendWith(MockitoExtension.class)
-@RequiredArgsConstructor
 public class LessonServiceTest {
 
     @Mock
-    private final LessonRepository lessonRepository;
+    private EmailSenderService emailService;
     @Mock
-    private final StudentRepository studentRepository;
+    private LessonRepository lessonRepository;
     @Mock
-    private final TeacherRepository teacherRepository;
+    private StudentRepository studentRepository;
     @Mock
-    private final ClassroomRepository classroomRepository;
+    private TeacherRepository teacherRepository;
     @Mock
-    private final EmailSenderService emailSenderService;
+    private ClassroomRepository classroomRepository;
+    @Mock
+    private EmailSenderService emailSenderService;
     @InjectMocks
-    private final LessonService service;
+    private LessonService service;
+    @Mock
+    GlobalExceptionHandler exceptionHandler;
 
     @Test
     void save_ShouldSaveALesson(){
@@ -61,11 +76,64 @@ public class LessonServiceTest {
                 .lessonDateTime(now)
                 .build();
         Lesson.builder().lessonDateTime(now);
-        Mockito.when(classroomRepository.findById(classroomId)).thenReturn(Optional.ofNullable(classroom));
-        Mockito.when(teacherRepository.findById(teacherId)).thenReturn(Optional.ofNullable(build));
+        when(classroomRepository.findById(classroomId)).thenReturn(Optional.ofNullable(classroom));
+        when(teacherRepository.findById(teacherId)).thenReturn(Optional.ofNullable(build));
         service.save(createLessonRequestDTO);
-        Mockito.verify(lessonRepository).save(build1);
+        verify(lessonRepository).save(build1);
+    }
+    @Test
+    void findById_shouldReturnLessonResponseDTO_whenLessonExists() {
+        // Given
+        long lessonId = 1L;
 
+        Teacher teacher = Teacher.builder()
+                .id(2L)
+                .name("John")
+                .lastName("Doe")
+                .email("john.doe@example.com")
+                .grade("Math")
+                .rate("5")
+                .build();
+
+        Classroom classroom = Classroom.builder()
+                .id(3L)
+                .name("Room A")
+                .build();
+
+        Student student1 = Student.builder()
+                .id(4L)
+                .name("Alice")
+                .build();
+
+        Student student2 = Student.builder()
+                .id(5L)
+                .name("Bob")
+                .build();
+
+        Lesson lesson = Lesson.builder()
+                .id(lessonId)
+                .topic("Math")
+                .lessonDateTime(LocalDateTime.of(2025, 3, 22, 10, 0))
+                .teacher(teacher)
+                .classroom(classroom)
+                .students(List.of(student1, student2))
+                .build();
+
+        when(lessonRepository.findById(lessonId)).thenReturn(Optional.ofNullable(lesson));
+
+        // When
+        LessonResponseDTO result = service.findById(lessonId);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(lessonId, result.getId());
+        assertEquals("Math", result.getTopic());
+        assertEquals(LocalDateTime.of(2025, 3, 22, 10, 0), result.getLessonDateTime());
+        assertEquals(2L, result.getTeacherid());
+        assertEquals(List.of(4L, 5L), result.getStudentsIds());
+        assertEquals(3L, result.getClassroomid());
+
+        verify(lessonRepository, times(1)).findById(lessonId);
     }
 
 }

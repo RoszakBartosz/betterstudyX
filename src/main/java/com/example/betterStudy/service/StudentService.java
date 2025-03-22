@@ -74,7 +74,7 @@ public class StudentService {
     }
     @Transactional
     public StudentResponseDTO updateStudent(UpdateStudentRequestDTO requestDTO, long id){
-        if (studentRepository.findByEmail(requestDTO.getEmail())==null) {
+        if (studentRepository.findByEmail(requestDTO.getEmail())!=null) {
             throw new InvalidEmailException("this email already exists ");
         }
         Student studentById = studentRepository.findById(id).orElseThrow(NotFoundStudentException::new);

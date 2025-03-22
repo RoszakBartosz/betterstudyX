@@ -40,7 +40,7 @@ public class SecurityConfiguration  {
                     .requestMatchers(request -> request.getServletPath().startsWith("/classroom")).hasAnyRole("STUDENT", "ADMIN", "TEACHER")
                     .requestMatchers("/student/**").hasAnyRole("ADMIN", "TEACHER")
                     .requestMatchers("/teacher/**").hasRole("ADMIN")
-                    .requestMatchers("/lesson/find-by-id/**").hasRole("STUDENT")
+                    .requestMatchers("/lesson/find-by-id/**").hasRole("STUDENT, ADMIN")
                     .requestMatchers("/lesson/**").hasAnyRole("TEACHER", "ADMIN")
                     .requestMatchers("/users/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
