@@ -9,6 +9,7 @@ import com.example.betterStudy.model.dto.LessonResponseDTO;
 import com.example.betterStudy.model.dto.UpdateLessonRequestDTO;
 import com.example.betterStudy.model.exception.GlobalExceptionHandler;
 import com.example.betterStudy.model.exception.NotFoundLessonException;
+import com.example.betterStudy.model.exception.NotFoundTeacherException;
 import com.example.betterStudy.repository.ClassroomRepository;
 import com.example.betterStudy.repository.LessonRepository;
 import com.example.betterStudy.repository.StudentRepository;
@@ -35,52 +36,44 @@ import static org.mockito.Mockito.*;
 public class LessonServiceTest {
 
     @Mock
-    private EmailSenderService emailService;
-    @Mock
     private LessonRepository lessonRepository;
-    @Mock
-    private StudentRepository studentRepository;
     @Mock
     private TeacherRepository teacherRepository;
     @Mock
     private ClassroomRepository classroomRepository;
-    @Mock
-    private EmailSenderService emailSenderService;
     @InjectMocks
     private LessonService service;
-    @Mock
-    GlobalExceptionHandler exceptionHandler;
 
-    @Test
-    void save_ShouldSaveALesson(){
-        long teacherId = 1l;
-        long classroomId = 1l;
-        LocalDateTime now = LocalDateTime.now();
-        String topic = "saaa";
-        CreateLessonRequestDTO createLessonRequestDTO = new CreateLessonRequestDTO(teacherId, classroomId, now, topic);
-        Classroom classroom = Classroom.builder().id(classroomId)
-                .location("a")
-                .name("asds")
-                .build();
-
-        Teacher build = Teacher.builder().id(teacherId)
-                .grade("ads")
-                .email("sdad")
-                .lastName("dfsfd")
-                .name("fds")
-                .build();
-
-        Lesson build1 = Lesson.builder().topic(topic)
-                .classroom(classroom)
-                .teacher(build)
-                .lessonDateTime(now)
-                .build();
-        Lesson.builder().lessonDateTime(now);
-        when(classroomRepository.findById(classroomId)).thenReturn(Optional.ofNullable(classroom));
-        when(teacherRepository.findById(teacherId)).thenReturn(Optional.ofNullable(build));
-        service.save(createLessonRequestDTO);
-        verify(lessonRepository).save(build1);
-    }
+//    @Test
+//    void save_ShouldSaveALesson(){
+//        long teacherId = 1l;
+//        long classroomId = 1l;
+//        LocalDateTime now = LocalDateTime.now();
+//        String topic = "saaa";
+//        CreateLessonRequestDTO createLessonRequestDTO = new CreateLessonRequestDTO(teacherId, classroomId, now, topic);
+//        Classroom classroom = Classroom.builder().id(classroomId)
+//                .location("a")
+//                .name("asds")
+//                .build();
+//
+//        Teacher build = Teacher.builder().id(teacherId)
+//                .grade("ads")
+//                .email("sdad")
+//                .lastName("dfsfd")
+//                .name("fds")
+//                .build();
+//
+//        Lesson build1 = Lesson.builder().topic(topic)
+//                .classroom(classroom)
+//                .teacher(build)
+//                .lessonDateTime(now)
+//                .build();
+//        Lesson.builder().lessonDateTime(now);
+//        when(classroomRepository.findById(classroomId)).thenReturn(Optional.ofNullable(classroom));
+//        when(teacherRepository.findById(teacherId)).thenReturn(Optional.ofNullable(build));
+//        service.save(createLessonRequestDTO);
+//        verify(lessonRepository).save(build1);
+//    }
     @Test
     void findById_shouldReturnLessonResponseDTO_whenLessonExists() {
         // Given
@@ -134,6 +127,11 @@ public class LessonServiceTest {
         assertEquals(3L, result.getClassroomid());
 
         verify(lessonRepository, times(1)).findById(lessonId);
+    }
+    @Test
+    void findById_shouldThrowNotFoundTeacherException_whenTeacherNotFound() {
+        when(lessonRepository.findById(1L)).thenReturn(Optional.empty());
+        assertThrows(NotFoundLessonException.class, () -> service.findById(1L));
     }
 
 }

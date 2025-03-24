@@ -23,7 +23,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(MockitoExtension.class) //TODO po co to
+@ExtendWith(MockitoExtension.class)
 class ClassroomServiceTest {
     @Mock
     LessonRepository lessonRepository;

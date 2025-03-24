@@ -17,8 +17,9 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/find-by-id/{id}")
-    public ResponseEntity<UserResponseDTO> findById(@Valid @PathVariable(name = "id")long id)
+    public ResponseEntity<UserResponseDTO> findById(@PathVariable(name = "id") long id)
     {
+        System.out.println(id);
         UserResponseDTO userResponseDTO = userService.findById(id);
         return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
     }

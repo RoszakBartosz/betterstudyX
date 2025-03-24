@@ -3,8 +3,13 @@ package com.example.betterStudy.Controller;
 
 import com.example.betterStudy.controller.LessonController;
 import com.example.betterStudy.controller.StudentController;
+import com.example.betterStudy.model.Classroom;
 import com.example.betterStudy.model.Lesson;
+import com.example.betterStudy.model.Student;
+import com.example.betterStudy.model.Teacher;
 import com.example.betterStudy.model.dto.LessonResponseDTO;
+import com.example.betterStudy.model.dto.UpdateLessonRequestDTO;
+import com.example.betterStudy.model.enums.UserRole;
 import com.example.betterStudy.repository.LessonRepository;
 import com.example.betterStudy.repository.StudentRepository;
 import com.example.betterStudy.repository.TeacherRepository;
@@ -30,8 +35,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -48,6 +52,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.zone.ZoneRules;
 import java.util.Formatter;
 import java.util.List;
+import java.util.Set;
 
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest(LessonController.class)
@@ -57,13 +62,6 @@ public class LessonControllerTest {
     private LessonService service;
     @Autowired
     private MockMvc mockMvc;
-    @Mock
-    TeacherRepository teacherRepository;
-    @Mock
-    StudentRepository studentRepository;
-    @Mock
-    LessonRepository lessonRepository;
-
 
 
     @Test
@@ -149,5 +147,60 @@ public class LessonControllerTest {
                 .andExpect(jsonPath("$.content[2].lessonDateTime").value(startsWith("2025-07-22T14:35:00")));
     }
 
+//    @Test
+//    @WithMockUser(username = "admin", password = "admin")
+//    void addStudents_shouldAddStudentsToList() throws Exception {
+//
+//        Lesson lesson = Lesson.builder()
+//                .id(1L)
+//                .lessonDateTime(LocalDateTime.now())
+//                .topic("Math")
+//                .build();
+//
+//        UpdateLessonRequestDTO updateLessonRequestDTO = UpdateLessonRequestDTO.builder()
+//                .classroomId(1L)
+//                .teacherId(1L)
+//                .lessonDateTime(LocalDateTime.now())
+//                .topic("Physics")
+//                .build();
+//
+//        Student build = Student.builder()
+//                .id(1l)
+//                .name("maciek")
+//                .build();
+//        mockMvc.perform(post("/lesson/add-students/1")
+//                .with(httpBasic("admin", "admin"))
+//                        .contentType("application/json")
+//                        .content("[1]"))
+//                .andDo(print())
+//                .andExpect(status().isOk());
+//
+//        verify(service).addStudents(Set.of(1L), 1L);
+//
+//    }
+@WithMockUser(username = "admin", password = "admin")
+@Test
+void testAddStudentsToLesson() throws Exception {
+    mockMvc.perform(post("/lesson/add-students/1")
+                    .contentType("application/json")
+                    .content("[1]")
+                    .with(httpBasic("admin", "admin")))
+            .andDo(print())
+            .andExpect(status().isOk());
+
+    verify(service).addStudents(Set.of(1L), 1L);
+}
+    @Test
+    @WithMockUser(username = "admin", password = "admin")
+    void deleteStudents_shouldRemoveStudentsFromLesson() throws Exception {
+        mockMvc.perform(delete("/lesson/delete-students/1")
+                        .contentType("application/json")
+                        .content("[1,2]")
+                        .with(httpBasic("admin", "admin")))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        verify(service).deleteStudents(Set.of(1L, 2L), 1L);
+    }
 }
 

@@ -36,7 +36,6 @@ public class SecurityConfiguration  {
         http.csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorize -> authorize
                     .requestMatchers("/student/find-by-id/**").permitAll()
-                    .requestMatchers(request -> request.getMethod().equals("POST")).hasRole("ADMIN")
                     .requestMatchers(request -> request.getServletPath().startsWith("/classroom")).hasAnyRole("STUDENT", "ADMIN", "TEACHER")
                     .requestMatchers("/student/**").hasAnyRole("ADMIN", "TEACHER")
                     .requestMatchers("/teacher/**").hasRole("ADMIN")
